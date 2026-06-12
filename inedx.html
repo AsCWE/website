@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AsCWE</title>
+    <style>
+        :root {
+            --bg: #0a0c10;
+            --panel: #12161f;
+            --border: #21262d;
+            --text-raw: #f0f6fc;
+            --text-muted: #8b949e;
+            --accent: #58a6ff;
+            --accent-dim: rgba(88, 166, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-family: 'SF Mono', Monaco, Consolas, 'Fira Code', monospace;
+            background-color: var(--bg);
+            color: var(--text-raw);
+        }
+
+        body {
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Navbar Layout */
+        header {
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: rgba(10, 12, 16, 0.85);
+            backdrop-filter: blur(12px);
+            z-index: 100;
+        }
+
+        .nav-frame {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .nav-logo-text {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--text-raw);
+            text-decoration: none;
+        }
+
+        .nav-logo-text span {
+            color: var(--accent);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 24px;
+        }
+
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
+        }
+
+        nav a:hover {
+            color: var(--accent);
+        }
+
+        /* Hero Setup */
+        .hero {
+            padding: 100px 0 80px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .main-brand-logo {
+            max-width: 180px;
+            height: auto;
+            margin-bottom: 32px;
+            display: block;
+        }
+
+        .subtitle {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            max-width: 640px;
+            line-height: 1.7;
+            margin-bottom: 32px;
+        }
+
+        .matrix-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 4px;
+            background: var(--accent-dim);
+            transition: all 0.2s ease;
+        }
+
+        .matrix-btn:hover {
+            background: var(--accent);
+            color: var(--bg);
+            box-shadow: 0 0 15px rgba(88, 166, 255, 0.3);
+        }
+
+        /* Sections Layout */
+        section {
+            padding: 80px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-tag {
+            font-size: 0.85rem;
+            color: var(--accent);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        section h2 {
+            font-size: 1.6rem;
+            color: var(--text-raw);
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+
+        /* Bio */
+        .bio-text {
+            color: var(--text-muted);
+            font-size: 1rem;
+            max-width: 720px;
+        }
+
+        /* Modular Projects & Donate Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            padding: 32px;
+            border-radius: 6px;
+            transition: border-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .card h3 {
+            font-size: 1.3rem;
+            color: var(--text-raw);
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+        }
+
+        .meta-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--accent);
+            padding: 4px 10px;
+            border-radius: 4px;
+        }
+
+        /* Donate Section Specifics */
+        .donate-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .crypto-item {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 16px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .crypto-label {
+            color: var(--accent);
+            font-weight: bold;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .crypto-address {
+            color: var(--text-muted);
+            word-break: break-all;
+            font-family: monospace;
+        }
+
+        .coffee-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #ffdd00;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+
+        .coffee-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        footer {
+            padding: 80px 0 40px 0;
+            text-align: center;
+        }
+
+        .social-matrix {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin: 24px 0 40px 0;
+        }
+
+        .social-matrix a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s ease;
+        }
+
+        .social-matrix a:hover {
+            color: var(--accent);
+        }
+
+        .meta-copyright {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .license-text {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .license-text a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .license-text a:hover {
+            text-decoration: underline;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 600px) {
+            .nav-frame {
+                flex-direction: column;
+                justify-content: center;
+                gap: 8px;
+                height: auto;
+                padding: 16px 0;
+            }
+
+            .hero {
+                padding: 60px 0;
+            }
+
+            .main-brand-logo {
+                max-width: 140px;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container nav-frame">
+            <a href="#" class="nav-logo-text">ascwe<span>.</span>me</a>
+            <nav>
+                <ul>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#projects">Projects</a></li>
+                    <li><a href="#donate">Donate</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container hero-content">
+            <img src="ascwe-logo.png" alt="AsCWE Logo" class="main-brand-logo">
+            <p class="subtitle">Systems Programmer & Student | Deeply into OS development, kernel engineering, and low-level architectures.</p>
+            <a href="#projects" class="matrix-btn">Fetch Projects</a>
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="container">
+            <div class="section-tag">0x01 // Init</div>
+            <h2>About Me</h2>
+            <p class="bio-text">
+                I focus on low-level environments, working directly down to raw hardware execution without high-level abstraction layers. Writing software in C and Assembly to interface straight with bare metal components, architecting core platform routines, and dissecting networking topologies form the foundation of my engineering workflow.
+            </p>
+        </div>
+    </section>
+
+    <section id="projects">
+        <div class="container">
+            <div class="section-tag">0x02 // Source</div>
+            <h2>Projects</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>AsCore</h3>
+                    <p>An independent operating system architecture built completely from the ground up, moving toward a decoupled microkernel layout.</p>
+                    <div class="meta-tags">
+                        <span class="tag">C</span>
+                        <span class="tag">Assembly</span>
+                        <span class="tag">Microkernel</span>
+                        <span class="tag">Bare-Metal</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="donate">
+        <div class="container">
+            <div class="section-tag">0x03 // Fund</div>
+            <h2>Support My Work</h2>
+            <div class="card">
+                <a href="https://www.buymeacoffee.com/YOUR_USERNAME" target="_blank" class="coffee-link">☕ Buy Me a Coffee</a>
+                <p>If you find my open-source infrastructure or kernel experiments useful, feel free to support via crypto networks:</p>
+
+                <div class="donate-grid">
+                    <div class="crypto-item">
+                        <span class="crypto-label">BTC:</span>
+                        <span class="crypto-address">NotReadyYet</span>
+                    </div>
+                    <div class="crypto-item">
+                        <span class="crypto-label">ETH:</span>
+                        <span class="crypto-address">NotReadyYet</span>
+                    </div>
+                    <div class="crypto-item">
+                        <span class="crypto-label">XMR:</span>
+                        <span class="crypto-address">NotReadyYet</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="container">
+            <div class="section-tag">0x04 // Link</div>
+            <h2>Connect</h2>
+            <div class="social-matrix">
+                <a href="https://github.com/ascwe" target="_blank">GitHub</a>
+                <a href="mailto:ascwe@ascwe.me">ascwe@ascwe.me</a>
+            </div>
+            <p class="meta-copyright">&copy; 2026 ascwe.me. All rights reserved.</p>
+            <p class="license-text">This page is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC-BY-SA 4.0</a>.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
