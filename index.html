@@ -1,415 +1,219 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AsCWE</title>
-    <style>
-        :root {
-            --bg: #0a0c10;
-            --panel: #12161f;
-            --border: #21262d;
-            --text-raw: #f0f6fc;
-            --text-muted: #8b949e;
-            --accent: #58a6ff;
-            --accent-dim: rgba(88, 166, 255, 0.1);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ascwe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#000000;
+    --fg:#ffffff;
+    --dim:#8a8a8a;
+    --line:#3a3a3a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--fg);
+    font-family:'JetBrains Mono', monospace;
+    font-size:15px;
+    line-height:1.7;
+    padding-bottom:60px;
+  }
+  a{color:var(--fg);}
+  ::selection{background:var(--fg); color:var(--bg);}
+  .wrap{max-width:720px; margin:0 auto; padding:0 24px;}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  header{
+    border-bottom:1px solid var(--line);
+    position:sticky; top:0;
+    background:var(--bg);
+    z-index:10;
+  }
+  .nav-row{
+    display:flex; justify-content:space-between; align-items:center;
+    height:56px; font-size:0.85rem;
+  }
+  .nav-row a{text-decoration:none;}
+  .nav-links{display:flex; gap:18px;}
+  .nav-links a{color:var(--dim);}
+  .nav-links a:hover{color:var(--fg);}
 
-        html {
-            scroll-behavior: smooth;
-            font-family: 'SF Mono', Monaco, Consolas, 'Fira Code', monospace;
-            background-color: var(--bg);
-            color: var(--text-raw);
-        }
+  .prompt{color:var(--dim);}
+  .prompt .path{color:var(--fg);}
 
-        body {
-            line-height: 1.6;
-            padding-bottom: 60px;
-        }
+  section{padding:40px 0; border-bottom:1px solid var(--line);}
+  section:last-of-type{border-bottom:none;}
 
-        .container {
-            max-width: 850px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
+  .cmd-line{margin-bottom:14px; font-size:0.9rem;}
+  .cmd-line::before{content:"$ "; color:var(--dim);}
 
-        /* Navbar Layout */
-        header {
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            background: rgba(10, 12, 16, 0.85);
-            backdrop-filter: blur(12px);
-            z-index: 100;
-        }
+  h1{
+    font-size:1.6rem;
+    font-weight:700;
+    margin:20px 0 10px;
+  }
+  .cursor{
+    display:inline-block;
+    width:9px; height:1.1em;
+    background:var(--fg);
+    margin-left:4px;
+    vertical-align:text-bottom;
+    animation:blink 1s steps(1) infinite;
+  }
+  @keyframes blink{50%{opacity:0;}}
 
-        .nav-frame {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 70px;
-        }
+  p.body-text{
+    color:var(--dim);
+    max-width:64ch;
+    margin-bottom:8px;
+  }
 
-        .nav-logo-text {
-            font-size: 1.1rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            color: var(--text-raw);
-            text-decoration: none;
-        }
+  .tag-line{
+    margin-top:16px;
+    font-size:0.85rem;
+    color:var(--dim);
+  }
+  .tag-line span{color:var(--fg);}
+  .tag-line span:not(:last-child)::after{content:" ,"; color:var(--dim);}
 
-        .nav-logo-text span {
-            color: var(--accent);
-        }
+  h2.section-h{
+    font-size:1rem;
+    margin-bottom:18px;
+  }
+  h2.section-h::before{content:"# "; color:var(--dim);}
 
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 24px;
-        }
+  pre.block{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.88rem;
+    color:var(--fg);
+    white-space:pre-wrap;
+    border:1px solid var(--line);
+    padding:16px 18px;
+    overflow-x:auto;
+  }
+  pre.block .k{color:var(--dim);}
 
-        nav a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.2s ease;
-        }
+  table.kv{
+    width:100%;
+    border-collapse:collapse;
+    font-size:0.88rem;
+    margin-top:16px;
+  }
+  table.kv td{
+    padding:6px 0;
+    border-top:1px dashed var(--line);
+  }
+  table.kv tr:first-child td{border-top:none;}
+  table.kv td:first-child{color:var(--dim); width:140px;}
 
-        nav a:hover {
-            color: var(--accent);
-        }
+  ul.list{list-style:none;}
+  ul.list li{
+    display:flex;
+    justify-content:space-between;
+    padding:10px 0;
+    border-top:1px dashed var(--line);
+    font-size:0.92rem;
+  }
+  ul.list li:first-child{border-top:none;}
+  ul.list li .note{color:var(--dim); font-size:0.85rem;}
+  ul.list li::before{content:"- ";}
 
-        /* Hero Setup */
-        .hero {
-            padding: 100px 0 80px 0;
-            border-bottom: 1px solid var(--border);
-        }
+  .connect-list{list-style:none; margin-top:16px;}
+  .connect-list li{padding:6px 0; font-size:0.92rem;}
+  .connect-list li::before{content:"> "; color:var(--dim);}
+  .connect-list a{text-decoration:underline; text-underline-offset:3px;}
+  .connect-list a:hover{color:var(--dim);}
 
-        .hero-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
+  footer{
+    padding-top:32px;
+    font-size:0.78rem;
+    color:var(--dim);
+  }
 
-        .main-brand-logo {
-            max-width: 180px;
-            height: auto;
-            margin-bottom: 32px;
-            display: block;
-        }
-
-        .subtitle {
-            font-size: 1.15rem;
-            color: var(--text-muted);
-            max-width: 640px;
-            line-height: 1.7;
-            margin-bottom: 32px;
-        }
-
-        .matrix-btn {
-            display: inline-block;
-            padding: 10px 20px;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 600;
-            border-radius: 4px;
-            background: var(--accent-dim);
-            transition: all 0.2s ease;
-        }
-
-        .matrix-btn:hover {
-            background: var(--accent);
-            color: var(--bg);
-            box-shadow: 0 0 15px rgba(88, 166, 255, 0.3);
-        }
-
-        /* Sections Layout */
-        section {
-            padding: 80px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .section-tag {
-            font-size: 0.85rem;
-            color: var(--accent);
-            margin-bottom: 16px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        section h2 {
-            font-size: 1.6rem;
-            color: var(--text-raw);
-            margin-bottom: 24px;
-            font-weight: 600;
-        }
-
-        /* Bio */
-        .bio-text {
-            color: var(--text-muted);
-            font-size: 1rem;
-            max-width: 720px;
-        }
-
-        /* Modular Projects & Donate Grid */
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 24px;
-        }
-
-        .card {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            padding: 32px;
-            border-radius: 6px;
-            transition: border-color 0.2s ease, transform 0.2s ease;
-        }
-
-        .card:hover {
-            border-color: var(--accent);
-            transform: translateY(-2px);
-        }
-
-        .card h3 {
-            font-size: 1.3rem;
-            color: var(--text-raw);
-            margin-bottom: 12px;
-        }
-
-        .card p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            margin-bottom: 24px;
-        }
-
-        .meta-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .tag {
-            font-size: 0.75rem;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            color: var(--accent);
-            padding: 4px 10px;
-            border-radius: 4px;
-        }
-
-        /* Donate Section Specifics */
-        .donate-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-top: 16px;
-        }
-
-        .crypto-item {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            padding: 16px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            min-width: 0; /* Prevent layout blowout from long XMR hashes later */
-        }
-
-        .crypto-label {
-            color: var(--accent);
-            font-weight: bold;
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        .crypto-address {
-            color: var(--text-muted);
-            word-break: break-all;
-            font-family: monospace;
-        }
-        
-
-        .coffee-link {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #ffdd00;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 0.95rem;
-        }
-
-        .coffee-link:hover {
-            text-decoration: underline;
-        }
-
-        /* Footer */
-        footer {
-            padding: 80px 0 40px 0;
-            text-align: center;
-        }
-
-        .social-matrix {
-            display: flex;
-            justify-content: center;
-            gap: 32px;
-            margin: 24px 0 40px 0;
-        }
-
-        .social-matrix a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.95rem;
-            transition: color 0.2s ease;
-        }
-
-        .social-matrix a:hover {
-            color: var(--accent);
-        }
-
-        .meta-copyright {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-
-        .license-text {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .license-text a {
-            color: var(--accent);
-            text-decoration: none;
-        }
-
-        .license-text a:hover {
-            text-decoration: underline;
-        }
-
-        /* Mobile Optimization */
-        @media (max-width: 600px) {
-            .nav-frame {
-                flex-direction: column;
-                justify-content: center;
-                gap: 8px;
-                height: auto;
-                padding: 16px 0;
-            }
-
-            .hero {
-                padding: 60px 0;
-            }
-
-            .main-brand-logo {
-                max-width: 140px;
-            }
-
-            .subtitle {
-                font-size: 1rem;
-            }
-        }
-    </style>
+  @media (max-width:520px){
+    .nav-links{gap:12px; font-size:0.8rem;}
+    h1{font-size:1.35rem;}
+  }
+</style>
 </head>
 <body>
 
-    <header>
-        <div class="container nav-frame">
-            <a href="#" class="nav-logo-text">ascwe<span>.</span>me</a>
-            <nav>
-                <ul>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#projects">Projects</a></li>
-                    <li><a href="#support">Support</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+<header>
+  <div class="wrap nav-row">
+    <a href="#top">ascwe</a>
+    <nav class="nav-links">
+      <a href="#about">about</a>
+      <a href="#projects">projects</a>
+      <a href="#offline">offline</a>
+      <a href="#connect">connect</a>
+    </nav>
+  </div>
+</header>
 
-    <section class="hero">
-        <div class="container hero-content">
-            <img src="ascwe-logo.png" alt="AsCWE Logo" class="main-brand-logo">
-            <p class="subtitle">15 years old Systems Programmer & Student | Deeply into OS development, kernel engineering, RTL engineering and low-level architectures.</p>
-            <a href="#projects" class="matrix-btn">Fetch Projects</a>
-        </div>
-    </section>
+<div class="wrap">
 
-    <section id="about">
-        <div class="container">
-            <div class="section-tag">0x01 // Init</div>
-            <h2>About Me</h2>
-            <p class="bio-text">
-                I focus on low-level environments, working directly down to raw hardware execution without high-level abstraction layers. Writing software in C and Assembly to interface straight with bare metal components, architecting core platform routines, and dissecting networking topologies form the foundation of my engineering workflow.
-            </p>
-        </div>
-    </section>
+  <section id="top">
+    <p class="cmd-line prompt"><span class="path">guest@ascwe</span>:~$ whoami</p>
+    <h1>ascwe<span class="cursor"></span></h1>
+    <p class="body-text">15 years old systems programmer & student. Into OS development, kernel engineering, RTL and low-level architectures.</p>
+    <p class="tag-line">
+      <span>C</span>
+      <span>RISC-V ASM</span>
+      <span>Bare-Metal</span>
+      <span>Microkernel</span>
+    </p>
+  </section>
 
-    <section id="projects">
-        <div class="container">
-            <div class="section-tag">0x02 // Source</div>
-            <h2>Projects</h2>
-            <div class="grid">
-                <div class="card">
-                    <h3>AsCore</h3>
-                    <p>An independent operating system architecture built completely from the ground up, moving toward a decoupled microkernel layout.</p>
-                    <div class="meta-tags">
-                        <span class="tag">C</span>
-                        <span class="tag">RISC-V Assembly</span>
-                        <span class="tag">Microkernel</span>
-                        <span class="tag">Bare-Metal</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+  <section id="about">
+    <p class="cmd-line prompt"><span class="path">guest@ascwe</span>:~$ cat about.txt</p>
+    <h2 class="section-h">about</h2>
+    <p class="body-text">I focus on low-level environments, working directly down to raw hardware execution without high-level abstraction layers. Writing C and Assembly to interface straight with bare-metal components, architecting core platform routines, and dissecting networking topologies form the foundation of how I work.</p>
+  </section>
 
-    <section id="support">
-        <div class="container">
-            <div class="section-tag">0x03 // Fund</div>
-            <h2>Sponsor My Work</h2>
-            <div class="card">
-                <a href="https://www.buymeacoffee.com/YOUR_USERNAME" target="_blank" class="coffee-link">☕ Buy Me a Coffee</a>
-                <p>If you find my open-source infrastructure or kernel experiments useful, feel free to support my ongoing research via crypto networks:</p>
+  <section id="projects">
+    <p class="cmd-line prompt"><span class="path">guest@ascwe</span>:~$ ls projects/</p>
+    <h2 class="section-h">projects</h2>
+    <pre class="block"><span class="k">drwxr-xr-x</span>  AsCore/</pre>
+    <table class="kv">
+      <tr><td>description</td><td>Independent OS built from the ground up, moving toward a decoupled microkernel layout</td></tr>
+      <tr><td>architecture</td><td>RISC-V (RV32I)</td></tr>
+      <tr><td>type</td><td>Microkernel</td></tr>
+      <tr><td>language</td><td>C, RISC-V Assembly</td></tr>
+      <tr><td>target</td><td>QEMU virt</td></tr>
+      <tr><td>status</td><td>in development</td></tr>
+    </table>
+  </section>
 
-                <div class="donate-grid">
-                    <div class="crypto-item">
-                        <span class="crypto-label">BTC:</span>
-                        <span class="crypto-address">NotReadyYet</span>
-                    </div>
-                    <div class="crypto-item">
-                        <span class="crypto-label">ETH:</span>
-                        <span class="crypto-address">NotReadyYet</span>
-                    </div>
-                    <div class="crypto-item">
-                        <span class="crypto-label">XMR:</span>
-                        <span class="crypto-address">NotReadyYet</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+  <section id="offline">
+    <p class="cmd-line prompt"><span class="path">guest@ascwe</span>:~$ cat offline.txt</p>
+    <h2 class="section-h">offline</h2>
+    <ul class="list">
+      <li><span>bodybuilding</span><span class="note">strength training</span></li>
+      <li><span>taekwondo</span><span class="note">green belt</span></li>
+      <li><span>horseback riding</span><span class="note">equestrian</span></li>
+      <li><span>cycling</span><span class="note">road &amp; endurance</span></li>
+    </ul>
+  </section>
 
-    <footer id="contact">
-        <div class="container">
-            <div class="section-tag">0x04 // Link</div>
-            <h2>Connect</h2>
-            <div class="social-matrix">
-                <a href="https://github.com/AsCWE" target="_blank">GitHub</a>
-                <a href="mailto:ascwe@ascwe.me">ascwe@ascwe.me</a>
-            </div>
-            <p class="meta-copyright">&copy; 2026 ascwe.me. All rights reserved.</p>
-            <p class="license-text">This page is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC-BY-SA 4.0</a>.</p>
-        </div>
-    </footer>
+  <section id="connect">
+    <p class="cmd-line prompt"><span class="path">guest@ascwe</span>:~$ cat contact.txt</p>
+    <h2 class="section-h">connect</h2>
+    <ul class="connect-list">
+      <li><a href="https://github.com/AsCWE" target="_blank">github.com/AsCWE</a></li>
+      <li><a href="mailto:ascwe@ascwe.me">ascwe@ascwe.me</a></li>
+    </ul>
+  </section>
+
+  <footer>
+    &copy; 2026 ascwe.me — licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC-BY-SA 4.0</a>
+  </footer>
+
+</div>
 
 </body>
 </html>
